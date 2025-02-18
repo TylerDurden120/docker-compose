@@ -1,0 +1,27 @@
+---
+name: unit_specs
+
+"on":
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: unit-specs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        clean: true
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.1.6"
+        bundler-cache: false
+    - run: bundle install
+    - run: bundle exec rake spec:unit
+    - run: bundle exec rake component_specs
